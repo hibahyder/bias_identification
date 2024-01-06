@@ -3,8 +3,9 @@ import torch
 from transformers import BertTokenizer, BertForSequenceClassification
 
 # Load your BERT model
-model_bert = BertForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=4)
-model_bert.load_state_dict(torch.load("path/to/your/saved/model.pth"))
+
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+model_bert = torch.load("bert_model.pth",map_location=torch.device('cpu'))
 model_bert.eval()
 
 # Load your label mapping
@@ -18,8 +19,22 @@ label_mapping = {
 # Streamlit app
 st.title("Bias Prediction App")
 
-# Input text area for user to enter text
-text_to_classify_bert = st.text_area("Enter text for bias prediction", "")
+Type = st.radio(
+    "Select input type",
+    ["Enter a statement", "Select predefined statement"])
+if Type == 'Enter a statement':
+    text_to_classify_bert = st.text_area("Enter text for bias prediction", "")
+else:
+    text_to_classify_bert = st.selectbox(
+    'Select a statement from below',
+    ("My belief is that America has always been superior compared to others.",
+      "The female nurse assisted the male doctor in the surgery",
+        "He's an atheist, so he does not have any morals",
+        "Our county boasts diverse landscapes and a vibrant community, offering opportunities and experiences that appeal to various interests and preferences."),
+    index=None,
+    placeholder="Select statement...",)
+
+st.write('Your input:', text_to_classify_bert)
 
 # Tokenize input text and make prediction
 if st.button("Predict Bias"):
