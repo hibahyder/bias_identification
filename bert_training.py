@@ -7,9 +7,9 @@ import pandas as pd
 from transformers import BertTokenizer, BertForSequenceClassification, AdamW
 from sklearn.metrics import accuracy_score
 
-
-dataset_path = r"D:\Users\hibah\Desktop\bias project\bias project dataset.csv"
+dataset_path = "bias_project_dataset.csv"
 df = pd.read_csv(dataset_path)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Extract text and labels from your dataset
 texts = df['TEXT'].tolist()
@@ -48,7 +48,7 @@ train_inputs, val_inputs, train_masks, val_masks, train_labels, val_labels = tra
 # BERT Model
 num_classes = 4
 model_bert = BertForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=num_classes)
-
+model_bert.to(device)
 # Create data loaders for BERT model
 batch_size = 8
 train_dataset = TensorDataset(train_inputs, train_masks, train_labels)
@@ -68,6 +68,8 @@ for epoch in range(num_epochs_bert):
     total_loss_bert = 0.0
     for inputs, masks, labels in train_dataloader:
         optimizer_bert.zero_grad()
+        # move data to device (gpu/cpu)
+        inputs, masks, labels = inputs.to(device), masks.to(device), labels.to(device)
         outputs_bert = model_bert(inputs, attention_mask=masks, labels=labels)
         loss_bert = outputs_bert.loss
         loss_bert.backward()
@@ -83,6 +85,8 @@ for epoch in range(num_epochs_bert):
 
     with torch.no_grad():
         for inputs, masks, labels in val_dataloader:
+            # move data to device (gpu/cpu)
+            inputs, masks, labels = inputs.to(device), masks.to(device), labels.to(device)
             outputs_bert = model_bert(inputs, attention_mask=masks, labels=labels)
             val_losses_bert.append(outputs_bert.loss)
             val_predictions_bert.extend(outputs_bert.logits.argmax(dim=1).tolist())
