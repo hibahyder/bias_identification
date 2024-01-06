@@ -106,4 +106,4 @@ for epoch in range(num_epochs_bert):
     accuracy_bert = accuracy_score(val_labels_tensor.numpy(), val_predictions_bert.numpy())
     print(f"Epoch {epoch + 1}/{num_epochs_bert} - BERT Model - Training Loss: {average_loss_bert:.4f} - Validation Loss: {val_loss_bert:.4f} - Val Accuracy: {accuracy_bert:.4f}")
 
-    torch.save(model_bert.state_dict(), "bert_model.pth")
+    torch.save(model_bert, "bert_model.pth")

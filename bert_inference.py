@@ -7,6 +7,8 @@ import pandas as pd
 from transformers import BertTokenizer, BertForSequenceClassification, AdamW
 from sklearn.metrics import accuracy_score
 
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+model_bert = torch.load("bert_model.pth",map_location=torch.device('cpu'))
 # Test a sample text
 text_to_classify_bert = "It could all be set up. I don't know if I believe Auschwitz ever really happened."
 input_ids_bert = tokenizer(text_to_classify_bert, padding='max_length', truncation=True, max_length=128, return_tensors='pt')['input_ids']
@@ -15,7 +17,6 @@ attention_mask_bert = tokenizer(text_to_classify_bert, padding='max_length', tru
 with torch.no_grad():
     model_bert.eval()
     output_bert = model_bert(input_ids_bert, attention_mask=attention_mask_bert)
-
 # Determine the predicted label for BERT model
 predicted_label_bert = torch.argmax(output_bert.logits, dim=1).item()
 
