@@ -17,7 +17,7 @@ label_mapping = {
 }
 
 # Streamlit app
-st.title("Bias Prediction App")
+st.header(":green[Bias Prediction App]",divider='rainbow')
 
 Type = st.radio(
     "Select input type",
@@ -37,7 +37,7 @@ else:
 st.write('Your input:', text_to_classify_bert)
 
 # Tokenize input text and make prediction
-if st.button("Predict Bias"):
+if st.button("Predict Bias",type="primary"):
     if text_to_classify_bert:
         tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
         input_ids_bert = tokenizer(text_to_classify_bert, padding='max_length', truncation=True, max_length=128, return_tensors='pt')['input_ids']
