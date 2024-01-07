@@ -3,4 +3,3 @@ torch
 transformers
 scikit-learn
 pandas
-torchvision
